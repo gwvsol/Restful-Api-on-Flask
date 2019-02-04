@@ -1,5 +1,5 @@
 #!/bin/bash
-remoteHost="uwsgi.loc:5000"
+remoteHost="192.168.0.158:5000"
 url="api/admin"
 user="root"
 passwd="root"

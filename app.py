@@ -67,13 +67,10 @@ def setdb():
         conf = app.config['DB_CONFIG']
         use_db = str(app.config['DB_NAME'])
         with UseDatabase(conf) as db:
-            # curl -s -u root:root -G http://uwsgi.loc:5000/api/db
             if request.method == 'GET':
                 d = db.all_db()
-            # curl -s -u root:root -X POST http://uwsgi.loc:5000/api/db
             elif request.method == 'POST':
                 d = db.create_db(use_db)
-            # curl -s -u root:root -X DELETE http://uwsgi.loc:5000/api/db
             elif request.method == 'DELETE':
                 d = db.del_db(use_db)
     else:
@@ -92,11 +89,9 @@ def settab():
         name = list(app.config['DB_TAB'].values())
         t = ''
         with UseDatabase(conf, use_db) as db:
-            # curl -s -G -u root:root http://uwsgi.loc:5000/api/tab
             if request.method == 'GET':
                 """Запрос таблиц"""
                 t = db.all_table(use_db)
-            # curl -s -u root:root -X POST http://uwsgi.loc:5000/api/tab
             elif request.method == 'POST':
                 """Создание таблицы"""
                 for n in range(len(name)):
@@ -105,7 +100,6 @@ def settab():
                         t = t + '{},'.format(message)
                     else:
                         t = t + '{}'.format(message)
-            # curl -s -u root:root -X DELETE http://uwsgi.loc:5000/api/tab
             elif request.method == 'DELETE':
                 """Удалени таблицы"""
                 for n in range(len(name)):
