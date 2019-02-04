@@ -6,6 +6,9 @@
 
 Описание развертывания приложения опробовано на [CentOS7](https://www.centos.org/).
 
+### Установка приложения
+***
+
 Установка Python3 и базы данных RethinkDB
 
 ```shell
@@ -83,10 +86,16 @@ ExecStart=/var/app_wsgi/wsgi/venv/bin/uwsgi --ini uwsgi.ini # Исправить
 # Настройка автозапуска приложения
 systemctl daemon-reload
 systemctl enable flask-uwsgi.service
+
 systemctl start flask-uwsgi.service     # Старт
 systemctl status flask-uwsgi.service    # Проверка статуса работы БД
 systemctl stop flask-uwsgi.service      # Стоп
 systemctl restart flask-uwsgi.service   # Рестарт
 ```
+### Настройка приложения
+***
+
+По умолчанию логин и пароль доступа к приложению установлен ```root:root```
+
 
 
