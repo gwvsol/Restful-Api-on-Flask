@@ -1,5 +1,4 @@
 class Config(object):
-    ROOT = True
     ROOT_USER = {'login': 'root', 'passw': 'b4b8daf4b8ea9d39568719e1e320076f'}
     USER_PERMISSION = None
     DB_CONFIG = { 'host': 'localhost', 'port': 28015, }
