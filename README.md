@@ -21,3 +21,9 @@ yum -y install python36u-pip
 #Обновляем pip
 pip3.6 install --upgrade pip
 ```
+Создание виртуальной среды
+```shell
+mkdir webapp
+cd webapp
+python3.6 -m venv venv
+```
