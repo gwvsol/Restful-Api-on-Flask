@@ -97,6 +97,14 @@ systemctl restart flask-uwsgi.service   # Рестарт
 
 По умолчанию логин и пароль доступа к приложению установлен ```root:root```
 
+Если необходимо изменить логин и пароль по умолчанию:
+```python
+from hashlib import md5
+def setpasswd(login: str, passw: str) -> str:
+    """Преобразование пароля и логина в хеш MD5"""
+    return str(md5(str(passw+login).lower().encode('utf-8')).hexdigest())
+```
+
 Все необходимые настройки приложения (название базы данных, названия таблиц, ```help```, даны в файле ```config.py```.
 Для промотра какие уже существуют базы даных по умолчнию:
 
