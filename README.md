@@ -160,7 +160,7 @@ passw="admin"
 ```json
 {
     "email": "mail@mail.ru",
-    "gender": male,
+    "gender": "male",
     "login": "data",
     "name": "Busan",
     "passw": "dsfsdfsdaf",
