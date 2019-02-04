@@ -14,5 +14,6 @@ class Config(object):
             'name': 'not required, are added when editing a profile', \
             'gender': 'not required, are added when editing a profile'} , \
             'explanations': 'profile editing is performed after login and password are specified', \
-            'example edit user': 'curl -s -u login:pass -H Content-Type: application/json -X POST -d YOUR DATA http://uwsgi.loc:5000/api/user', \
+            'example edit user': 'curl -s -u login:pass -H Content-Type: application/json -X POST -d YOUR DATA http://uwsgi.loc:5000/api/user/login', \
+            'example password recovery': 'curl -s -u login:pass -H Content-Type: application/json -X POST -d YOUR DATA http://uwsgi.loc:5000/api/passw/login', \
             'example create new user': 'curl -s -H Content-Type: application/json -X POST -d YOUR DATA http://uwsgi.loc:5000/api/new' }
