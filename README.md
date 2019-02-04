@@ -62,6 +62,7 @@ uid = work # Здесь необходимо указать пользовате
 gid = work # Здесь необходимо указать группу пользователя от которого будет выполняться приложение
 ```
 Настройка firewall
+```shell
 #firewall-cmd --permanent --add-port=8080/tcp 
 firewall-cmd --permanent --add-port=5000/tcp # Порт на котором будет работать приложение
 firewall-cmd --reload # Применяем настройки
