@@ -164,7 +164,7 @@ passw="admin"
     "login": "data",
     "name": "Busan",
     "passw": "dsfsdfsdaf",
-    "phone": "79005006826",
+    "phone": "79005006826"
 }
 ```
 происходит создание нового пользователя.
@@ -175,11 +175,34 @@ passw="admin"
 
 ```curl -s -u data:data -G  https://api.hldns.ru/api/user/data```
 
-Запрос ```POST``` редактирование данных профиля. Запрос формируется аналогичным способом как при создании нового пользователя. Для упрощения тестирования, можно использовать скрипт ```update_user.sh```.
+Запрос ```POST``` редактирование данных профиля. Запрос формируется аналогичным способом как при создании нового пользователя плюс данные для аутентификации пользователя. При редактировании ```login``` пользователя изменить не возможно. Для упрощения тестирования, можно использовать скрипт ```update_user.sh```.
 
+```curl -s -u data:data -H Content-Type: application/json -X POST -d "YOUR DATA" http://IP:5000/api/user/login```
+```json
+{
+    "email": "mail@mail.ru",
+    "gender": "male",
+    "name": "Busan",
+    "passw": "dsfsdfsdaf",
+    "phone": "79005006826"
+}
+```
 Использование запроса ```DELETE``` приводит к удалению пользователя.
 
 ```curl -s -u data:data -X DELETE  https://api.hldns.ru/api/user/data```
+
+#### Восстановление пароля пользователя: *http://IP:5000/api/passw/login*
+
+Запрос ```POST```: восстановление пароля. Для восстановления необходимо передать в формате ```JSON``` следующие данные:
+
+```curl -s -u data:data -H Content-Type: application/json -X POST -d "YOUR DATA" http://IP:5000/api/passw/login```
+```json
+{
+    "email": "mail@mail.ru",
+    "passw": "dsfsdfsdaf",
+    "phone": "79005006826"
+}
+```
 
 
 
