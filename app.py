@@ -25,10 +25,10 @@ def setpasswd(login: str, passw: str) -> str:
 @auth.verify_password
 def verify_password(username, password):
     """Проверка пароля и логина"""
-    with UseDatabase(DB_CONF, USE_DB) as db:
+    with UseDatabase(DB_CONF) as db:
         try:
-            root = db.getroot(TAB_ROOT)['login']
-            root_passw = db.getroot(TAB_ROOT)['passw']
+            root = db.getroot(USE_DB, TAB_ROOT)['login']
+            root_passw = db.getroot(USE_DB, TAB_ROOT)['passw']
         except TypeError:
             root, root_passw = None, None
         rt = root
@@ -39,18 +39,18 @@ def verify_password(username, password):
             if root_passw == setpasswd(username.lower(), password):
                 app.config['USER_PERMISSION'] = True
                 # При совпедении passwd, возвращаем хеш passwd root
-                passw = db.getroot(TAB_ROOT)['passw'] if rt else root_passw
+                passw = db.getroot(USE_DB, TAB_ROOT)['passw'] if rt else root_passw
                 return passw
         else:
             try:
-                usr = db.gettask(TAB, str(username.lower()))['login']
-                passw = db.gettask(TAB, str(username.lower()))['passw']
+                usr = db.gettask(USE_DB, TAB, str(username.lower()))['login']
+                passw = db.gettask(USE_DB, TAB, str(username.lower()))['passw']
             except TypeError:
                 usr = None
             if usr == username.lower():
                 if passw == setpasswd(username.lower(), password):
                     app.config['USER_PERMISSION'] = username.lower()
-                    return db.gettask(TAB, str(username.lower()))['passw']
+                    return db.gettask(USE_DB, TAB, str(username.lower()))['passw']
     return None
 
 
@@ -86,7 +86,7 @@ def settab():
     if app.config['USER_PERMISSION'] == True:
         name = list(app.config['DB_TAB'].values())
         t = ''
-        with UseDatabase(DB_CONF, USE_DB) as db:
+        with UseDatabase(DB_CONF) as db:
             if request.method == 'GET':
                 """Запрос таблиц"""
                 t = db.all_table(USE_DB)
@@ -122,9 +122,9 @@ def setadmin():
             пользователя с новым именем"""
     if app.config['USER_PERMISSION'] == True:
         if request.method == 'GET':
-            with UseDatabase(DB_CONF, USE_DB) as db:
+            with UseDatabase(DB_CONF) as db:
                 try:
-                    n = db.getroot(TAB)
+                    n = db.getroot(USE_DB, TAB_ROOT)
                 except (KeyError, TypeError):
                     n = {'error': 'the record does not exist'}
                 if not n:
@@ -143,25 +143,25 @@ def setadmin():
             new_json['id'] = str(request.json['login'].lower())
             new_json['login'] = new_json['id']
             new_json['passw'] = setpasswd(new_json['login'], request.json['passw'])
-            with UseDatabase(DB_CONF, USE_DB) as db:
+            with UseDatabase(DB_CONF) as db:
                 try:
-                    n = db.getroot(TAB)['login']
+                    n = db.getroot(USE_DB, TAB)['login']
                     id_name = n
                 except (KeyError, TypeError):
                     n = None
                 if not n:
-                    n = db.insert(TAB, new_json)
+                    n = db.insert(USE_DB, TAB, new_json)
                 elif n:
-                    n = db.updetask(TAB, id_name, new_json)
+                    n = db.updetask(USE_DB, TAB, id_name, new_json)
         elif request.method == 'DELETE':
-            with UseDatabase(DB_CONF, USE_DB) as db:
+            with UseDatabase(DB_CONF) as db:
                 try:
-                    n = db.getroot(TAB)['login']
+                    n = db.getroot(USE_DB, TAB)['login']
                     id_name = n
                 except (KeyError, TypeError):
                     n = None
                 if n:
-                    n = db.delltask(TAB, id_name)
+                    n = db.delltask(USE_DB, TAB, id_name)
                 else:
                     n = {'error': 'the record does not exist'}
         else:
@@ -177,8 +177,8 @@ def all_users():
     if app.config['USER_PERMISSION'] == True:
         if request.method == 'GET':
             tab = app.config['DB_TAB']['tab_1']
-            with UseDatabase(DB_CONF, USE_DB) as db:
-                n = db.gettasks(TAB)
+            with UseDatabase(DB_CONF) as db:
+                n = db.gettasks(USE_DB, TAB)
         else:
             n = {'error method': 'method is not supported'}
     else:
@@ -220,10 +220,10 @@ def new_user():
             new_json['ch_date'] = new_json['reg_date']
             new_json['name'] = request.json['name'] if 'name' in request.json else CONTENT['name']
             new_json['gender'] = request.json['gender'] if 'gender' in request.json else CONTENT['gender']
-            with UseDatabase(DB_CONF, USE_DB) as db:
-                if db.countid(TAB, id_name, new_json['id']) == 0:
+            with UseDatabase(DB_CONF) as db:
+                if db.countid(USE_DB, TAB, id_name, new_json['id']) == 0:
                     # Если записи нет, добавляем новую
-                    n = db.insert(TAB, new_json)
+                    n = db.insert(USE_DB, TAB, new_json)
                 else:
                     n = {'user ' + new_json['login']: 'already exist'}
             return jsonify({'info': n})
@@ -237,13 +237,13 @@ def get_user(task_id):
     """Запрос данных о пользователе, редактирование данных и удаление"""
     if app.config['USER_PERMISSION'] == str(task_id).lower() or app.config['USER_PERMISSION'] == True:
         if request.method == 'GET':  # Запрос данных о пользователе
-            with UseDatabase(DB_CONF, USE_DB) as db:
-                n = db.gettask(TAB, str(task_id))
+            with UseDatabase(DB_CONF) as db:
+                n = db.gettask(USE_DB, TAB, str(task_id))
         elif request.method == 'POST':  # Редактирование данных пользователя
             new_json = {}
-            with UseDatabase(DB_CONF, USE_DB) as db:
+            with UseDatabase(DB_CONF) as db:
                 try:
-                    data = db.gettask(TAB, str(task_id))
+                    data = db.gettask(USE_DB, TAB, str(task_id))
                 except (KeyError, TypeError):
                     data = None
                 if data:
@@ -254,18 +254,18 @@ def get_user(task_id):
                     new_json['ch_date'] = datetime.now().strftime("%Y-%m-%d %X")
                     new_json['name'] = request.json['name'] if 'name' in request.json else data['name']
                     new_json['gender'] = request.json['gender'] if 'gender' in request.json else data['gender']
-                    n = db.updetask(TAB, data['login'], new_json)
+                    n = db.updetask(USE_DB, TAB, data['login'], new_json)
                 else:
                     n = {'error': 'the record does not exist'}
         elif request.method == 'DELETE':  # Удаление данных о пользователе
-            with UseDatabase(DB_CONF, USE_DB) as db:
+            with UseDatabase(DB_CONF) as db:
                 try:
-                    n = db.gettask(TAB, str(task_id))['login']
+                    n = db.gettask( USE_DB, TAB, str(task_id))['login']
                 except (KeyError, TypeError):
                     n = None
                 id_name = n
                 if n:
-                    n = db.delltask(TAB, id_name)
+                    n = db.delltask(USE_DB, TAB, id_name)
                 else:
                     n = {'error': 'the record does not exist'}
         else:
@@ -295,9 +295,9 @@ def passw_user(task_id):
             return jsonify({'error': err})
         else:
             new_json = {}
-            with UseDatabase(DB_CONF, USE_DB) as db:
+            with UseDatabase(DB_CONF) as db:
                 try:
-                    data = db.gettask(TAB, str(task_id))
+                    data = db.gettask(USE_DB, TAB, str(task_id))
                 except (KeyError, TypeError):
                     data = None
                 if data and data['phone'] == request.json['phone'] and data['email'] == request.json['email']:
@@ -305,7 +305,7 @@ def passw_user(task_id):
                     new_json['phone'] = request.json['phone']
                     new_json['email'] = request.json['email']
                     new_json['ch_date'] = datetime.now().strftime("%Y-%m-%d %X")
-                    n = db.updetask(TAB, str(task_id), new_json)
+                    n = db.updetask(USE_DB, TAB, str(task_id), new_json)
                 else:
                     n = {'error': 'no such user or email and phone data does not match'}
     else:
