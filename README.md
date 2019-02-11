@@ -83,12 +83,15 @@ firewall-cmd --reload # Применяем настройки
 ```
 
 Подготовка к запуску приложения
+
 ```shell
 vim uwsgi.ini
 uid = work # Здесь необходимо указать пользователя от которого будет выполняться приложение
 gid = work # Здесь необходимо указать группу пользователя от которого будет выполняться приложение
+
 #Проверить работу приложения можно таким образом
 uwsgi --ini uwsgi.ini
+
 #Настройка работы приложения через systemd
 cp flask-uwsgi.service /usr/lib/systemd/system
 vim /usr/lib/systemd/system/flask-uwsgi.service
